@@ -1,0 +1,41 @@
+# virtual environment
+venv/
+
+# misc.
+*.cache
+
+# Python-specific files
+*.pyc
+*.pyo
+__pycache__
+
+# Django-specific files
+db.sqlite3
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+
+# Secret keys and sensitive information
+.env
+
+# Django migration files
+/migrations/
+
+# Static files (collected by Django's collectstatic)
+/static/
+
+# Media files (user-uploaded content)
+/media/
+
+# Node.js
+node_modules/
+
+# Compiled files
+build/
+dist/
+*.js
+
+# Dependency directories
+lib/
+bin/
