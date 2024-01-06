@@ -109,12 +109,13 @@ def spotify_callback(request):
     # create payload
     data = {
         'access_token' : access_token,
-        'refresh-token' : refresh_token,
+        'refresh_token' : refresh_token,
     }
 
     # Append data to the redirect URL as query parameters
     query_parameters = '&'.join([f"{key}={value}" for key, value in data.items()])
     final_redirect_url = f"{redirect_url}?{query_parameters}"
+    print(final_redirect_url)
 
     # Frontend will have access to access token and refresh token
     return redirect(final_redirect_url)
@@ -167,18 +168,12 @@ def get_spotify_summary(request):
 
 
 # Function to check if a user has logged in yet
-def checkloggedin(request):
+def checkloggedin(request, access_token, refresh_token):
 
-    spotify_token_info = request.session.get('spotify_token_info')
-    print(spotify_token_info)
+    print('entered checkloggedin!')
 
-    if (spotify_token_info == None):
-        return JsonResponse(
-            { 'result': False }
-        )
-    
-    access_token = spotify_token_info.get('access_token')
-    refresh_token = spotify_token_info.get('refresh_token')
+    print(access_token)
+    print(refresh_token)
 
     check = checkExpired(access_token=access_token, refresh_token=refresh_token)
 
