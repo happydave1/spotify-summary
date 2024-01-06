@@ -1,8 +1,11 @@
 from django.urls import path
 from django.urls import include
-from .views import main, spotify_login, spotify_callback
+from .views import *
 
 urlpatterns = [
-    path('test/', spotify_login),
+    path('login/', spotify_login),
     path('callback/', spotify_callback),
+    path('getsummary/', get_spotify_summary),
+    path('checkloggedin/', checkloggedin),
+    path('debug/', get_spotify_summary),
 ]
