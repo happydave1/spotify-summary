@@ -121,49 +121,38 @@ def spotify_callback(request):
     return redirect(final_redirect_url)
 
 # Get summary of listened songs
-def get_spotify_summary(request):
-
-    # get token info from session
-    stored_token_info = request.session.get('spotify_token_info')
-
-    # check if it exists
-    if stored_token_info:
-
-        print("stored token info exists")
-
-        access_token = stored_token_info['access_token']
+def get_spotify_summary(request, access_token, refresh_token):
         
-        url = 'https://api.spotify.com/v1/me/top/artists'
+    # API call
+    url = 'https://api.spotify.com/v1/me/top/artists'
 
-        headers = {
-            'Authorization': 'Bearer ' + access_token,  # Replace with your actual access token
+    headers = {
+        'Authorization': 'Bearer ' + access_token,  # Replace with your actual access token
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        # Successful request
+        data = response.json()
+        # Return data
+        return JsonResponse(data)
+    else:
+        
+        # try refreshing token
+        CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+        CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
+        new_access_token = refresh_access_token(CLIENT_ID, CLIENT_SECRET, refresh_token)
+        new_header = {
+            'Authorization': 'Bearer ' + new_access_token,
         }
+        new_response = requests.get(url, headers=new_header)
+        if (new_response.status_code == 200):
+            print("successful!")
 
-        response = requests.get(url, headers=headers)
-
-        if response.status_code == 200:
-            # Successful request
-            data = response.json()
-            # Return data
-            return JsonResponse(data)
-        else:
-            
-            # try refreshing token
-            CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
-            CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
-            refresh_token = stored_token_info.get('refresh_token')
-            print(refresh_token)
-            new_access_token = refresh_access_token(CLIENT_ID, CLIENT_SECRET, refresh_token)
-            new_header = {
-                'Authorization': 'Bearer ' + new_access_token,
-            }
-            new_response = requests.get(url, headers=new_header)
-            if (new_response.status_code == 200):
-                print("successful!")
-
-            # Error handling
-            print(f"HTTP Error {response.status_code}: {response.text}")
-            return HttpResponse("Error while checking top artists!")
+        # Error handling
+        print(f"HTTP Error {response.status_code}: {response.text}")
+        return HttpResponse("Error while checking top artists!")
 
 
 
